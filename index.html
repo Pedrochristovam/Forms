@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Locais</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="CSS/app.css" />
+    <script src="JAVA/java.js"></script> 
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Captura de Locais</h1>
+            <p>Sistema completo para documentação de localizações</p>
+        </div>
+
+        <div class="content">
+            <!-- Pesquisa de Local -->
+            <div class="card">
+                <div class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    Pesquisar Local
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Digite o endereço ou nome do local...">
+                    <button onclick="searchLocation()" class="btn btn-primary">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        Pesquisar
+                    </button>
+                </div>
+                <div id="searchResults"></div>
+            </div>
+
+            <!-- Mapa e Captura -->
+            <div class="card">
+                <div class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    Captura do Local
+                </div>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <div class="tools-container">
+                    <div class="tool-btn active" data-tool="pen" onclick="selectTool('pen')">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        Caneta
+                    </div>
+                    <div class="tool-btn" data-tool="eraser" onclick="selectTool('eraser')">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0M4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53-6.36-6.36-3.54 3.54c-.78.78-.78 2.05 0 2.82Z"/></svg>
+                        Borracha
+                    </div>
+                    <div class="tool-btn" onclick="clearCanvas()">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        Limpar
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="drawingCanvas" class="drawing-canvas" width="800" height="400"></canvas>
+                </div>
+                <button onclick="captureLocation()" class="btn btn-success">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    Capturar Local
+                </button>
+            </div>
+
+            <!-- Captura do Terreno -->
+            <div class="card">
+                <div class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+                    Captura do Terreno
+                </div>
+                <div class="canvas-container">
+                    <canvas id="terrainCanvas" class="drawing-canvas" width="800" height="400"></canvas>
+                </div>
+                <div class="tools-container">
+                    <button onclick="setupTerrainDrawing()" class="btn btn-secondary">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        Desenhar Terreno
+                    </button>
+                    <button onclick="clearTerrainCanvas()" class="btn btn-danger">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        Limpar
+                    </button>
+                    <button onclick="captureTerrain()" class="btn btn-success">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Capturar Terreno
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload de Fotos -->
+            <div class="card">
+                <div class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    Upload de Fotos
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                    <svg class="icon" style="width: 48px; height: 48px; margin-bottom: 15px;" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    <p style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">Clique para adicionar fotos</p>
+                    <p style="color: #6c757d;">Selecione quantas fotos desejar</p>
+                </div>
+                <input type="file" id="photoInput" multiple accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                <div id="photoPreview" class="photo-preview"></div>
+            </div>
+
+            <!-- Descrições das Fotos -->
+            <div class="card" id="descriptionsCard" style="display: none;">
+                <div class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/></svg>
+                    Descrições das Fotos
+                </div>
+                <div id="descriptionsContainer" class="description-container"></div>
+            </div>
+
+            <!-- Gerar PDF -->
+            <div class="generate-pdf">
+    <button onclick="generatePDF(event)" class="btn btn-primary" style="font-size: 18px; padding: 20px 40px;">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+        </svg>
+        Gerar Relatório PDF
+    </button>
+</div>
+
+        </div>
+    </div>
+</body>
+</htm
